@@ -9,6 +9,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface DemandForecastRepository extends JpaRepository<DemandForecast, Long> {
-    List<DemandForecast> findByProductAndStore(Product product, Store store);
-    List<DemandForecast> findByForecastDate(LocalDate date);
+
+    List<DemandForecast> findByStoreAndProductAndForecastDateAfter(
+            Store store,
+            Product product,
+            LocalDate date
+    );
+
+    List<DemandForecast> findByStore_Id(Long storeId);
 }
