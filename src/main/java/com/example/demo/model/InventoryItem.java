@@ -1,24 +1,34 @@
 package com.example.demo.model;
 
-public class InventoryItem {
-    private String location;
-    private String product;
-    private int quantity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
+@Entity
+public class InventoryItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String product;      // For getProduct()
+    private int quantity;        // For getQuantity()
+    private String location;     // For getLocation()
+
+    // Default constructor
     public InventoryItem() {}
 
-    public InventoryItem(String location, String product, int quantity) {
-        this.location = location;
+    // Constructor with fields
+    public InventoryItem(String product, int quantity, String location) {
         this.product = product;
         this.quantity = quantity;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
         this.location = location;
+    }
+
+    // Getters and setters
+    public Long getId() {
+        return id;
     }
 
     public String getProduct() {
@@ -35,5 +45,13 @@ public class InventoryItem {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }
