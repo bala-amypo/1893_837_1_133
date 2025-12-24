@@ -1,8 +1,8 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Store;
-import com.example.demo.exceptions.BadRequestException;
-import com.example.demo.exceptions.ResourceNotFoundException;
+import com.example.demo.exception.BadRequestException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.StoreRepository;
 import com.example.demo.service.StoreService;
 import org.springframework.stereotype.Service;
