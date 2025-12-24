@@ -1,7 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.InventoryLevel;
-import com.example.demo.exception.BadRequestException;
+import com.example.demo.exceptions.BadRequestException;
 import com.example.demo.repository.InventoryLevelRepository;
 import com.example.demo.service.InventoryLevelService;
 import org.springframework.stereotype.Service;
