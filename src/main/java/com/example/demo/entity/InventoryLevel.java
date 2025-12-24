@@ -1,11 +1,11 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Table(name = "inventory_levels",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"store_id", "product_id"}))
 public class InventoryLevel {
 
     @Id
@@ -20,15 +20,25 @@ public class InventoryLevel {
 
     private Integer quantity;
 
-    private LocalDateTime lastUpdated;
+    private Instant lastUpdated;
 
     @PrePersist
-    public void onCreate() {
-        this.lastUpdated = LocalDateTime.now();
+    public void prePersist() {
+        this.lastUpdated = Instant.now();
     }
 
     @PreUpdate
-    public void onUpdate() {
-        this.lastUpdated = LocalDateTime.now();
+    public void preUpdate() {
+        this.lastUpdated = Instant.now();
     }
+
+    // getters & setters
+    public Long getId() { return id; }
+    public Store getStore() { return store; }
+    public void setStore(Store store) { this.store = store; }
+    public Product getProduct() { return product; }
+    public void setProduct(Product product) { this.product = product; }
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public Instant getLastUpdated() { return lastUpdated; }
 }
