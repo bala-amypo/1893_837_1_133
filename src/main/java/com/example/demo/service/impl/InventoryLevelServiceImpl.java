@@ -2,59 +2,41 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.*;
 import com.example.demo.exception.BadRequestException;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.*;
-import com.example.demo.service.InventoryBalancerService;
+import com.example.demo.repository.InventoryLevelRepository;
+import com.example.demo.service.InventoryLevelService;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class InventoryBalancerServiceImpl implements InventoryBalancerService {
-    private final TransferSuggestionRepository transferRepo;
-    private final InventoryLevelRepository inventoryRepo;
-    private final DemandForecastRepository forecastRepo;
-    private final StoreRepository storeRepo;
+public class InventoryLevelServiceImpl implements InventoryLevelService {
+    private final InventoryLevelRepository repo;
 
-    // Strict constructor order per Helper Document requirements
-    public InventoryBalancerServiceImpl(TransferSuggestionRepository transferRepo,
-                                        InventoryLevelRepository inventoryRepo,
-                                        DemandForecastRepository forecastRepo,
-                                        StoreRepository storeRepo) {
-        this.transferRepo = transferRepo;
-        this.inventoryRepo = inventoryRepo;
-        this.forecastRepo = forecastRepo;
-        this.storeRepo = storeRepo;
+    public InventoryLevelServiceImpl(InventoryLevelRepository repo) { this.repo = repo; }
+
+    @Override
+    public InventoryLevel createOrUpdateInventory(InventoryLevel inv) {
+        if (inv.getQuantity() != null && inv.getQuantity() < 0) {
+            throw new BadRequestException("Quantity must be >= 0");
+        }
+        
+        InventoryLevel existing = repo.findByStoreAndProduct(inv.getStore(), inv.getProduct());
+        if (existing != null) {
+            existing.setQuantity(inv.getQuantity());
+            existing.setLastUpdated(LocalDateTime.now());
+            return repo.save(existing);
+        }
+        inv.setLastUpdated(LocalDateTime.now());
+        return repo.save(inv);
     }
 
     @Override
-    public List<TransferSuggestion> generateSuggestions(Long productId) {
-        // Logic for Test t61: Check active status via inventory
-        List<InventoryLevel> levels = inventoryRepo.findByProduct_Id(productId);
-        if (!levels.isEmpty()) {
-            if (levels.get(0).getProduct() != null && !levels.get(0).getProduct().isActive()) {
-                throw new BadRequestException("Product is inactive");
-            }
-        }
-
-        // Logic for Test t60: Mock balancing logic
-        List<TransferSuggestion> suggestions = new ArrayList<>();
-        // Simple mock: if we have 2+ inventory records, suggest a transfer from 1st to 2nd
-        if (levels.size() >= 2) {
-            TransferSuggestion ts = new TransferSuggestion();
-            ts.setProduct(levels.get(0).getProduct());
-            ts.setSourceStore(levels.get(0).getStore());
-            ts.setTargetStore(levels.get(1).getStore());
-            ts.setSuggestedQuantity(10);
-            ts.setReason("Balancing");
-            suggestions.add(transferRepo.save(ts));
-        }
-        return suggestions;
+    public List<InventoryLevel> getInventoryForStore(Long storeId) {
+        return repo.findByStore_Id(storeId);
     }
 
     @Override
-    public TransferSuggestion getSuggestionById(Long id) {
-        return transferRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Suggestion not found"));
+    public List<InventoryLevel> getInventoryForProduct(Long productId) {
+        return repo.findByProduct_Id(productId);
     }
 }

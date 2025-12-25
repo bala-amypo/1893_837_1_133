@@ -39,12 +39,12 @@ public class TransferSuggestion {
     public Product getProduct() { return product; }
     public void setProduct(Product product) { this.product = product; }
     
-    // Alias for test compatibility
-    public void setSuggestedQuantity(Integer q) { this.quantity = q; }
-    public Integer getSuggestedQuantity() { return quantity; }
-    
     public Integer getQuantity() { return quantity; }
     public void setQuantity(Integer quantity) { this.quantity = quantity; }
+
+    // Test alias: setSuggestedQuantity -> setQuantity
+    public void setSuggestedQuantity(Integer q) { this.quantity = q; }
+    public Integer getSuggestedQuantity() { return quantity; }
     
     public String getPriority() { return priority; }
     public void setPriority(String priority) { this.priority = priority; }
@@ -53,5 +53,5 @@ public class TransferSuggestion {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
     public LocalDateTime getGeneratedAt() { return generatedAt; }
-    public void setGeneratedAt(LocalDateTime generatedAt) { this.generatedAt = generatedAt; } // Test t30 checks this
+    public void setGeneratedAt(LocalDateTime generatedAt) { this.generatedAt = generatedAt; }
 }
