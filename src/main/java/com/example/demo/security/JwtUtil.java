@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
@@ -28,27 +29,36 @@ public class JwtUtil {
     }
 
     public String generateToken(Authentication authentication) {
+        return generateToken(authentication.getName());
+    }
+
+    public String generateToken(String subject) {
         return Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(subject)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + jwtExpirationInMs))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // FIXED: HS256 matches test key size
                 .compact();
     }
     
-    // For tests passing email string directly
-    public String generateToken(String email) {
+    public String generateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
-                .setSubject(email)
+                .setClaims(claims)
+                .setSubject(subject)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + jwtExpirationInMs))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // FIXED: HS256 matches test key size
                 .compact();
     }
 
     public String getUsernameFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(getSigningKey()).build()
                 .parseClaimsJws(token).getBody().getSubject();
+    }
+    
+    // Alias for tests calling getUsername
+    public String getUsername(String token) {
+        return getUsernameFromToken(token);
     }
 
     public boolean validateToken(String authToken) {
@@ -59,4 +69,10 @@ public class JwtUtil {
             return false;
         }
     }
+    
+    public boolean isTokenValid(String token, String username) {
+        return username.equals(getUsername(token)) && validateToken(token);
+    }
+    
+    public long getExpirationMillis() { return this.jwtExpirationInMs; }
 }
