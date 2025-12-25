@@ -1,33 +1,31 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "stores", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "storeName")
-})
+@Table(name = "stores")
 public class Store {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    private String name;
+    private String location;
+    private Integer capacity;
+    
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(nullable = false, unique = true)
-    private String storeName;
+    public Store() {}
 
-    private String address;
-    private String region;
-
-    private Boolean active = true;
-
-    // getters & setters
     public Long getId() { return id; }
-    public String getStoreName() { return storeName; }
-    public void setStoreName(String storeName) { this.storeName = storeName; }
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-    public String getRegion() { return region; }
-    public void setRegion(String region) { this.region = region; }
-    public Boolean getActive() { return active; }
-    public void setActive(Boolean active) { this.active = active; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+    public Integer getCapacity() { return capacity; }
+    public void setCapacity(Integer capacity) { this.capacity = capacity; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
