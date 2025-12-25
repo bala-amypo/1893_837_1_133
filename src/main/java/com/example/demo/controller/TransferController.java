@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.TransferSuggestion;
-import com.example.demo.service.TransferService;
+import com.example.demo.service.InventoryBalancerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -9,17 +9,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/transfers")
 public class TransferController {
-    private final TransferService service;
+    private final InventoryBalancerService service;
 
-    public TransferController(TransferService service) { this.service = service; }
+    // Updated to inject InventoryBalancerService
+    public TransferController(InventoryBalancerService service) { this.service = service; }
 
     @GetMapping("/suggest")
-    public ResponseEntity<List<TransferSuggestion>> suggestTransfers() {
-        return ResponseEntity.ok(service.suggestTransfers());
+    public ResponseEntity<List<TransferSuggestion>> suggestTransfers(@RequestParam Long productId) {
+        return ResponseEntity.ok(service.generateSuggestions(productId));
     }
 
-    @PostMapping("/approve/{id}")
-    public ResponseEntity<TransferSuggestion> approveTransfer(@PathVariable Long id) {
-        return ResponseEntity.ok(service.approveTransfer(id));
+    @GetMapping("/{id}")
+    public ResponseEntity<TransferSuggestion> getTransferById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getSuggestionById(id));
     }
 }
