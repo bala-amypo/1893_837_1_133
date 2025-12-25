@@ -10,22 +10,46 @@ public class Store {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    private String name;
-    private String location;
+    @Column(unique = true)
+    private String storeName;
+    private String address;
+    private String region;
     private Integer capacity;
     
-    private LocalDateTime createdAt = LocalDateTime.now();
+    // Fix: Added active field
+    private Boolean active = true;
+    
+    private LocalDateTime createdAt;
 
-    public Store() {}
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        if(this.active == null) this.active = true;
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
+    public String getStoreName() { return storeName; }
+    public void setStoreName(String storeName) { this.storeName = storeName; }
+    
+    // Alias name and getters
+    public String getName() { return storeName; } 
+    public void setName(String name) { this.storeName = name; }
+    
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+    public String getLocation() { return address; } // Alias for compatibility
+    public void setLocation(String location) { this.address = location; }
+    
+    public String getRegion() { return region; }
+    public void setRegion(String region) { this.region = region; }
     public Integer getCapacity() { return capacity; }
     public void setCapacity(Integer capacity) { this.capacity = capacity; }
+    
+    // Fix: Getters for active
+    public Boolean isActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
+    
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
