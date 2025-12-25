@@ -5,4 +5,4 @@ import java.util.List;
 public interface DemandForecastService {
     DemandForecast createForecast(DemandForecast forecast);
     List<DemandForecast> getForecastsForStore(Long storeId);
-}
+}   
