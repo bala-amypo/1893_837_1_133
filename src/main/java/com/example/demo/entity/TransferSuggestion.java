@@ -12,19 +12,24 @@ public class TransferSuggestion {
     
     @ManyToOne
     private Store sourceStore;
-    
     @ManyToOne
     private Store targetStore;
-    
     @ManyToOne
     private Product product;
     
     private Integer quantity;
-    private String status = "PENDING"; // PENDING, APPROVED, REJECTED
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private String priority;
+    private String reason;
+    private String status = "PENDING";
+    private LocalDateTime generatedAt;
 
-    public TransferSuggestion() {}
+    @PrePersist
+    public void prePersist() {
+        this.generatedAt = LocalDateTime.now();
+        if(this.status == null) this.status = "PENDING";
+    }
 
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Store getSourceStore() { return sourceStore; }
@@ -33,9 +38,20 @@ public class TransferSuggestion {
     public void setTargetStore(Store targetStore) { this.targetStore = targetStore; }
     public Product getProduct() { return product; }
     public void setProduct(Product product) { this.product = product; }
+    
+    // Alias for test compatibility
+    public void setSuggestedQuantity(Integer q) { this.quantity = q; }
+    public Integer getSuggestedQuantity() { return quantity; }
+    
     public Integer getQuantity() { return quantity; }
     public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    
+    public String getPriority() { return priority; }
+    public void setPriority(String priority) { this.priority = priority; }
+    public String getReason() { return reason; }
+    public void setReason(String reason) { this.reason = reason; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getGeneratedAt() { return generatedAt; }
+    public void setGeneratedAt(LocalDateTime generatedAt) { this.generatedAt = generatedAt; } // Test t30 checks this
 }
