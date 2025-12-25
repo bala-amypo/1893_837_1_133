@@ -37,10 +37,10 @@ public class StoreServiceImpl implements StoreService {
         if (update.getStoreName() != null) s.setStoreName(update.getStoreName());
         if (update.getAddress() != null) s.setAddress(update.getAddress());
         if (update.getRegion() != null) s.setRegion(update.getRegion());
+        // active status is preserved unless explicitly changed via deactivate
         return repo.save(s);
     }
 
-    // Fix: Added missing method implementation
     @Override
     public void deactivateStore(Long id) {
         Store s = getStoreById(id);

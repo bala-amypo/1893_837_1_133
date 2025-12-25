@@ -7,7 +7,5 @@ public interface StoreService {
     Store getStoreById(Long id);
     List<Store> getAllStores();
     Store updateStore(Long id, Store store);
-    
-    // Fix: Added missing method
-    void deactivateStore(Long id);
+    void deactivateStore(Long id); // Added missing method
 }

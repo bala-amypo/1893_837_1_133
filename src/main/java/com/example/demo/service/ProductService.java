@@ -6,7 +6,5 @@ public interface ProductService {
     Product createProduct(Product product);
     Product getProductById(Long id);
     List<Product> getAllProducts();
-    
-    // Fix: Added missing method
-    void deactivateProduct(Long id);
+    void deactivateProduct(Long id); // Added missing method
 }

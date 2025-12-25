@@ -31,7 +31,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getAllProducts() { return repo.findAll(); }
 
-    // Fix: Added missing method implementation
     @Override
     public void deactivateProduct(Long id) {
         Product p = getProductById(id);
