@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 public class ForecastController {
     private final DemandForecastService service;
 
-    // Updated to inject DemandForecastService
     public ForecastController(DemandForecastService service) { this.service = service; }
 
     @PostMapping

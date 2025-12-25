@@ -11,14 +11,10 @@ import java.util.List;
 public class InventoryController {
     private final InventoryLevelService service;
 
-    // Updated to inject InventoryLevelService
     public InventoryController(InventoryLevelService service) { this.service = service; }
 
     @PostMapping("/update")
     public ResponseEntity<InventoryLevel> updateInventory(@RequestBody InventoryLevel inv) {
-        // Map request body to service call. 
-        // Note: If tests send params, use @RequestParam. 
-        // Looking at your test t49, it sends JSON content, so @RequestBody is correct.
         return ResponseEntity.ok(service.createOrUpdateInventory(inv));
     }
 

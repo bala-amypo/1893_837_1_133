@@ -11,7 +11,6 @@ import java.util.List;
 public class TransferController {
     private final InventoryBalancerService service;
 
-    // Updated to inject InventoryBalancerService
     public TransferController(InventoryBalancerService service) { this.service = service; }
 
     @GetMapping("/suggest")
