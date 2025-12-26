@@ -2,31 +2,24 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "demand_forecasts")
+@Table(name = "demand_forecast")
 public class DemandForecast {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @ManyToOne
+
+    @ManyToOne(optional = false)
     private Product product;
-    
-    @ManyToOne
+
+    @ManyToOne(optional = false)
     private Store store;
-    
+
     private LocalDate forecastDate;
-    private Integer predictedDemand;
-    private LocalDateTime createdAt;
+    private Integer forecastedDemand;
+    private Double confidenceScore;
 
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    // Getters and Setters
+    // getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Product getProduct() { return product; }
@@ -35,14 +28,8 @@ public class DemandForecast {
     public void setStore(Store store) { this.store = store; }
     public LocalDate getForecastDate() { return forecastDate; }
     public void setForecastDate(LocalDate forecastDate) { this.forecastDate = forecastDate; }
-    
-    // Alias for test compatibility (forecastedDemand vs predictedDemand)
-    public Integer getForecastedDemand() { return predictedDemand; }
-    public void setForecastedDemand(Integer predictedDemand) { this.predictedDemand = predictedDemand; }
-    
-    public Integer getPredictedDemand() { return predictedDemand; }
-    public void setPredictedDemand(Integer predictedDemand) { this.predictedDemand = predictedDemand; }
-    
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public Integer getForecastedDemand() { return forecastedDemand; }
+    public void setForecastedDemand(Integer forecastedDemand) { this.forecastedDemand = forecastedDemand; }
+    public Double getConfidenceScore() { return confidenceScore; }
+    public void setConfidenceScore(Double confidenceScore) { this.confidenceScore = confidenceScore; }
 }

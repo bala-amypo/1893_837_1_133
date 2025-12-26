@@ -1,30 +1,34 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
-@Table(name = "inventory_levels")
+@Table(name = "inventory_level", uniqueConstraints = @UniqueConstraint(columnNames = {"store_id", "product_id"}))
 public class InventoryLevel {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @ManyToOne
+
+    @ManyToOne(optional = false)
     private Store store;
-    
-    @ManyToOne
+
+    @ManyToOne(optional = false)
     private Product product;
-    
+
     private Integer quantity;
-    private LocalDateTime lastUpdated;
+    private Instant lastUpdated;
 
     @PrePersist
-    @PreUpdate
-    public void updateTimestamp() {
-        this.lastUpdated = LocalDateTime.now();
+    public void prePersist() {
+        if (this.lastUpdated == null) this.lastUpdated = Instant.now();
     }
 
+    @PreUpdate
+    public void preUpdate() {
+        this.lastUpdated = Instant.now();
+    }
+
+    // getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Store getStore() { return store; }
@@ -33,6 +37,6 @@ public class InventoryLevel {
     public void setProduct(Product product) { this.product = product; }
     public Integer getQuantity() { return quantity; }
     public void setQuantity(Integer quantity) { this.quantity = quantity; }
-    public LocalDateTime getLastUpdated() { return lastUpdated; }
-    public void setLastUpdated(LocalDateTime lastUpdated) { this.lastUpdated = lastUpdated; }
+    public Instant getLastUpdated() { return lastUpdated; }
+    public void setLastUpdated(Instant lastUpdated) { this.lastUpdated = lastUpdated; }
 }
