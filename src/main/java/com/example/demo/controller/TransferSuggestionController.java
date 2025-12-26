@@ -1,32 +1,32 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.TransferSuggestion;
-import com.example.demo.service.InventoryBalancerService;
-import org.springframework.http.ResponseEntity;
+import com.example.demo.service.TransferSuggestionService;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/suggestions")
 public class TransferSuggestionController {
 
-    private final InventoryBalancerService svc;
+    private final TransferSuggestionService service;
 
-    public TransferSuggestionController(InventoryBalancerService svc) { this.svc = svc; }
-
-    @PostMapping("/generate/{productId}")
-    public ResponseEntity<List<TransferSuggestion>> generate(@PathVariable Long productId) {
-        return ResponseEntity.ok(svc.generateSuggestions(productId));
+    public TransferSuggestionController(TransferSuggestionService service) {
+        this.service = service;
     }
 
-    @GetMapping("/store/{storeId}")
-    public ResponseEntity<List<TransferSuggestion>> forStore(@PathVariable Long storeId) {
-        return ResponseEntity.ok(svc.getSuggestionsForStore(storeId));
+    @PostMapping
+    public TransferSuggestion save(@RequestBody TransferSuggestion ts) {
+        return service.saveSuggestion(ts);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TransferSuggestion> get(@PathVariable Long id) {
-        return ResponseEntity.ok(svc.getSuggestionById(id));
+    public TransferSuggestion one(@PathVariable Long id) {
+        return service.getById(id);
+    }
+
+    @GetMapping
+    public List<TransferSuggestion> all() {
+        return service.getAll();
     }
 }
