@@ -4,7 +4,6 @@ import java.util.List;
 
 public interface ProductService {
     Product createProduct(Product product);
-    void deactivateProduct(Long id);
     Product getProductById(Long id);
-    List<Product> findAll();
+    List<Product> getAllProducts();
 }
