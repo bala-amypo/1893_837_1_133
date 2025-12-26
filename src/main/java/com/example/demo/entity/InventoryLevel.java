@@ -1,29 +1,39 @@
-package com.example.demo.controller;
+package com.example.demo.entity;
 
-import com.example.demo.entity.InventoryLevel;
-import com.example.demo.service.InventoryLevelService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
-@RestController
-@RequestMapping("/api/inventory")
-public class InventoryController {
-    private final InventoryLevelService service;
+@Entity
+@Table(name = "inventory_levels")
+public class InventoryLevel {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @ManyToOne
+    private Store store;
+    
+    @ManyToOne
+    private Product product;
+    
+    private Integer quantity;
+    private LocalDateTime lastUpdated;
 
-    // Updated to inject InventoryLevelService
-    public InventoryController(InventoryLevelService service) { this.service = service; }
-
-    @PostMapping("/update")
-    public ResponseEntity<InventoryLevel> updateInventory(@RequestBody InventoryLevel inv) {
-        // Map request body to service call. 
-        // Note: If tests send params, use @RequestParam. 
-        // Looking at your test t49, it sends JSON content, so @RequestBody is correct.
-        return ResponseEntity.ok(service.createOrUpdateInventory(inv));
+    @PrePersist
+    @PreUpdate
+    public void updateTimestamp() {
+        this.lastUpdated = LocalDateTime.now();
     }
 
-    @GetMapping("/store/{storeId}")
-    public ResponseEntity<List<InventoryLevel>> getInventoryByStore(@PathVariable Long storeId) {
-        return ResponseEntity.ok(service.getInventoryForStore(storeId));
-    }
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Store getStore() { return store; }
+    public void setStore(Store store) { this.store = store; }
+    public Product getProduct() { return product; }
+    public void setProduct(Product product) { this.product = product; }
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public LocalDateTime getLastUpdated() { return lastUpdated; }
+    public void setLastUpdated(LocalDateTime lastUpdated) { this.lastUpdated = lastUpdated; }
 }
