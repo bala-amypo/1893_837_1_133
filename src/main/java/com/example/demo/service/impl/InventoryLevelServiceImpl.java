@@ -1,63 +1,55 @@
-package com.example.demo.service.impl;
+package com.example.demo.service;
 
 import com.example.demo.entity.InventoryLevel;
-import com.example.demo.entity.Product;
 import com.example.demo.entity.Store;
+import com.example.demo.entity.Product;
 import com.example.demo.exception.BadRequestException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.InventoryLevelRepository;
-import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.StoreRepository;
-import com.example.demo.service.InventoryLevelService;
+import com.example.demo.repository.ProductRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class InventoryLevelServiceImpl implements InventoryLevelService {
-
-    private final InventoryLevelRepository repo;
+    private final InventoryLevelRepository invRepo;
     private final StoreRepository storeRepo;
     private final ProductRepository productRepo;
 
-    public InventoryLevelServiceImpl(InventoryLevelRepository repo, StoreRepository storeRepo, ProductRepository productRepo) {
-        this.repo = repo;
-        this.storeRepo = storeRepo;
-        this.productRepo = productRepo;
+    public InventoryLevelServiceImpl(InventoryLevelRepository i, StoreRepository s, ProductRepository p){
+        this.invRepo=i; this.storeRepo=s; this.productRepo=p;
     }
 
     @Override
-    public InventoryLevel createOrUpdateInventory(InventoryLevel inv) {
-        if (inv.getQuantity() == null || inv.getQuantity() < 0) {
-            throw new BadRequestException("Quantity must be >= 0");
-        }
-        Store store = storeRepo.findById(inv.getStore().getId()).orElseThrow(() -> new BadRequestException("Store not found"));
-        Product product = productRepo.findById(inv.getProduct().getId()).orElseThrow(() -> new BadRequestException("Product not found"));
+    public InventoryLevel createOrUpdateInventory(InventoryLevel inv){
+        if(inv.getQuantity() != null && inv.getQuantity() < 0)
+            throw new BadRequestException("Negative inventory not allowed");
 
-        InventoryLevel existing = repo.findByStoreAndProduct(store, product);
-        if (existing != null) {
+        Store s = storeRepo.findById(inv.getStore().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Store not found"));
+        Product p = productRepo.findById(inv.getProduct().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+        InventoryLevel existing = invRepo.findByStore_IdAndProduct_Id(s.getId(),p.getId()).orElse(null);
+        if(existing!=null){
             existing.setQuantity(inv.getQuantity());
-            return repo.save(existing);
-        } else {
-            inv.setStore(store);
-            inv.setProduct(product);
-            return repo.save(inv);
+            return invRepo.save(existing);
         }
+        return invRepo.save(inv);
     }
 
     @Override
-    public List<InventoryLevel> getInventoryForStore(Long storeId) {
-        return repo.findByStore_Id(storeId);
+    public List<InventoryLevel> getInventoryForStore(Long storeId){
+        if(!storeRepo.existsById(storeId))
+            throw new ResourceNotFoundException("Store not found");
+        return invRepo.findByStore_Id(storeId);
     }
 
     @Override
-    public List<InventoryLevel> getInventoryForProduct(Long productId) {
-        return repo.findByProduct_Id(productId);
-    }
-
-    @Override
-    public InventoryLevel getInventory(Long storeId, Long productId) {
-        Store s = storeRepo.findById(storeId).orElseThrow(() -> new BadRequestException("Store not found"));
-        Product p = productRepo.findById(productId).orElseThrow(() -> new BadRequestException("Product not found"));
-        return repo.findByStoreAndProduct(s, p);
+    public List<InventoryLevel> getInventoryForProduct(Long productId){
+        if(!productRepo.existsById(productId))
+            throw new ResourceNotFoundException("Product not found");
+        return invRepo.findByProduct_Id(productId);
     }
 }
