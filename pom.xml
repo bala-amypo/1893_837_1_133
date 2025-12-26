@@ -78,7 +78,6 @@
   <version>2.0.4</version>
 </dependency>
 
-        </dependency>
 
         <!-- Lombok -->
         <dependency>
