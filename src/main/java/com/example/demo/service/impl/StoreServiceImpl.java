@@ -11,43 +11,47 @@ import java.util.List;
 
 @Service
 public class StoreServiceImpl implements StoreService {
-
-    private final StoreRepository repo;
-
-    public StoreServiceImpl(StoreRepository repo) { this.repo = repo; }
-
+    
+    private final StoreRepository storeRepository;
+    
+    public StoreServiceImpl(StoreRepository storeRepository) {
+        this.storeRepository = storeRepository;
+    }
+    
     @Override
     public Store createStore(Store store) {
-        if (repo.findByStoreName(store.getStoreName()) != null) {
+        Store existing = storeRepository.findByStoreName(store.getStoreName());
+        if (existing != null) {
             throw new BadRequestException("Store name already exists");
         }
-        return repo.save(store);
+        return storeRepository.save(store);
     }
-
+    
     @Override
     public Store getStoreById(Long id) {
-        return repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Store not found"));
+        return storeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Store not found"));
     }
-
+    
     @Override
     public List<Store> getAllStores() {
-        return repo.findAll();
+        return storeRepository.findAll();
     }
-
+    
     @Override
     public Store updateStore(Long id, Store update) {
-        Store existing = getStoreById(id);
-        existing.setStoreName(update.getStoreName());
-        existing.setAddress(update.getAddress());
-        existing.setRegion(update.getRegion());
-        existing.setActive(update.isActive());
-        return repo.save(existing);
+        Store store = getStoreById(id);
+        store.setStoreName(update.getStoreName());
+        store.setAddress(update.getAddress());
+        store.setRegion(update.getRegion());
+        store.setActive(update.isActive());
+        return storeRepository.save(store);
     }
-
+    
     @Override
     public void deactivateStore(Long id) {
-        Store s = getStoreById(id);
-        s.setActive(false);
-        repo.save(s);
+        Store store = getStoreById(id);
+        store.setActive(false);
+        storeRepository.save(store);
     }
 }

@@ -1,6 +1,8 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.*;
+import com.example.demo.dto.AuthRequestDto;
+import com.example.demo.dto.AuthResponseDto;
+import com.example.demo.dto.RegisterRequestDto;
 import com.example.demo.entity.UserAccount;
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.repository.UserAccountRepository;
@@ -9,42 +11,46 @@ import com.example.demo.service.AuthService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-
 @Service
 public class AuthServiceImpl implements AuthService {
-
-    private final UserAccountRepository userRepo;
-    private final PasswordEncoder encoder;
+    
+    private final UserAccountRepository userAccountRepository;
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-
-    public AuthServiceImpl(UserAccountRepository userRepo, PasswordEncoder encoder, JwtUtil jwtUtil) {
-        this.userRepo = userRepo;
-        this.encoder = encoder;
+    
+    public AuthServiceImpl(UserAccountRepository userAccountRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+        this.userAccountRepository = userAccountRepository;
+        this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
     }
-
+    
     @Override
     public void register(RegisterRequestDto dto) {
-        if (userRepo.findByEmail(dto.getEmail()).isPresent()) {
-            throw new BadRequestException("Email already exists");
+        if (userAccountRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new BadRequestException("Store name already exists");
         }
-        UserAccount u = new UserAccount();
-        u.setEmail(dto.getEmail());
-        u.setFullName(dto.getFullName());
-        u.setPassword(encoder.encode(dto.getPassword()));
-        u.setRole(dto.getRole() == null ? "ROLE_USER" : dto.getRole());
-        u.prePersist();
-        userRepo.save(u);
+        
+        UserAccount user = new UserAccount();
+        user.setEmail(dto.getEmail());
+        user.setFullName(dto.getFullName());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setRole(dto.getRole() != null ? dto.getRole() : "ROLE_USER");
+        
+        userAccountRepository.save(user);
     }
-
+    
     @Override
     public AuthResponseDto login(AuthRequestDto dto) {
-        UserAccount u = userRepo.findByEmail(dto.getEmail()).orElseThrow(() -> new BadRequestException("Invalid credentials"));
-        if (!encoder.matches(dto.getPassword(), u.getPassword())) {
-            throw new BadRequestException("Invalid credentials");
+        UserAccount user = userAccountRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new BadRequestException("User not found"));
+        
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new BadRequestException("Invalid password");
         }
-        String token = jwtUtil.generateToken(u);
-        return new AuthResponseDto(token, jwtUtil.getExpiry(token));
+        
+        String token = jwtUtil.generateToken(user);
+        long expiresAt = System.currentTimeMillis() + jwtUtil.getExpirationMillis();
+        
+        return new AuthResponseDto(token, expiresAt);
     }
 }
