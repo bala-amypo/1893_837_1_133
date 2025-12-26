@@ -7,13 +7,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfig {
-
+    
     @Bean
-    public OpenAPI apiInfo() {
+    public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
                         .title("Multi-Location Inventory Balancer API")
-                        .version("v1")
-                        .description("API documentation"));
+                        .version("1.0.0")
+                        .description("API for managing inventory across multiple store locations"));
     }
 }
