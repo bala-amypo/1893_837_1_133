@@ -17,10 +17,11 @@
     </parent>
 
     <properties>
-        <java.version>17</java.version>
-        <jjwt.version>0.11.5</version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <java.version>17</java.version>
+    <jjwt.version>0.11.5</jjwt.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+</properties>
+
 
     <dependencies>
         <!-- Spring Boot -->
@@ -153,4 +154,3 @@
     </build>
 
 </project>
-    
