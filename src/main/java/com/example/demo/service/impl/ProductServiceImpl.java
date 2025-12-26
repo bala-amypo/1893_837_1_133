@@ -16,10 +16,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product createProduct(Product product) {
-        if (repo.findBySku(product.getSku()) != null) {
+        if (product.getSku() != null && repo.findBySku(product.getSku()) != null) {
             throw new BadRequestException("SKU already exists");
         }
-        product.setActive(true);
+        if (product.isActive() == null) product.setActive(true);
         return repo.save(product);
     }
 
@@ -31,6 +31,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getAllProducts() { return repo.findAll(); }
 
+    // Fix: Added missing method implementation
     @Override
     public void deactivateProduct(Long id) {
         Product p = getProductById(id);
