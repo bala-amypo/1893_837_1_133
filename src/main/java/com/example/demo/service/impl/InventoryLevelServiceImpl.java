@@ -23,7 +23,7 @@ public class InventoryLevelServiceImpl implements InventoryLevelService {
         InventoryLevel existing = repo.findByStoreAndProduct(inv.getStore(), inv.getProduct());
         if (existing != null) {
             existing.setQuantity(inv.getQuantity());
-            existing.setLastUpdated(LocalDateTime.now()); // Update timestamp
+            existing.setLastUpdated(LocalDateTime.now());
             return repo.save(existing);
         }
         inv.setLastUpdated(LocalDateTime.now());

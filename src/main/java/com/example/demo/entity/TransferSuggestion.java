@@ -12,14 +12,12 @@ public class TransferSuggestion {
     
     @ManyToOne
     private Store sourceStore;
-    
     @ManyToOne
     private Store targetStore;
-    
     @ManyToOne
     private Product product;
     
-    private Integer suggestedQuantity; // Field name expected by some tests
+    private Integer quantity;
     private String priority;
     private String reason;
     private String status = "PENDING";
@@ -31,6 +29,7 @@ public class TransferSuggestion {
         if(this.status == null) this.status = "PENDING";
     }
 
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Store getSourceStore() { return sourceStore; }
@@ -39,8 +38,14 @@ public class TransferSuggestion {
     public void setTargetStore(Store targetStore) { this.targetStore = targetStore; }
     public Product getProduct() { return product; }
     public void setProduct(Product product) { this.product = product; }
-    public Integer getSuggestedQuantity() { return suggestedQuantity; }
-    public void setSuggestedQuantity(Integer suggestedQuantity) { this.suggestedQuantity = suggestedQuantity; }
+    
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+
+    // Test alias: setSuggestedQuantity -> setQuantity
+    public void setSuggestedQuantity(Integer q) { this.quantity = q; }
+    public Integer getSuggestedQuantity() { return quantity; }
+    
     public String getPriority() { return priority; }
     public void setPriority(String priority) { this.priority = priority; }
     public String getReason() { return reason; }

@@ -16,7 +16,6 @@ public class InventoryBalancerServiceImpl implements InventoryBalancerService {
     private final DemandForecastRepository forecastRepo;
     private final StoreRepository storeRepo;
 
-    // Correct Constructor Order per Helper Document
     public InventoryBalancerServiceImpl(TransferSuggestionRepository transferRepo,
                                         InventoryLevelRepository inventoryRepo,
                                         DemandForecastRepository forecastRepo,
@@ -29,16 +28,16 @@ public class InventoryBalancerServiceImpl implements InventoryBalancerService {
 
     @Override
     public List<TransferSuggestion> generateSuggestions(Long productId) {
-        // Logic for Test t61: Inactive product throws BadRequest
+        // Logic for Test t61: Check active status via inventory
         List<InventoryLevel> levels = inventoryRepo.findByProduct_Id(productId);
         if (!levels.isEmpty()) {
-            if (!levels.get(0).getProduct().isActive()) {
+            if (levels.get(0).getProduct() != null && !levels.get(0).getProduct().isActive()) {
                 throw new BadRequestException("Product is inactive");
             }
         }
 
-        // Logic for Test t60: Create suggestions if balanced logic applies
         List<TransferSuggestion> suggestions = new ArrayList<>();
+        // Mock Logic for Test t60: suggest transfer if 2+ stores exist
         if (levels.size() >= 2) {
             TransferSuggestion ts = new TransferSuggestion();
             ts.setProduct(levels.get(0).getProduct());

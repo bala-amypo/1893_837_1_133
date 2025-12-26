@@ -38,7 +38,6 @@ public class UserAccount {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Getters/Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getEmail() { return email; }
@@ -50,7 +49,5 @@ public class UserAccount {
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
     public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; } // Needed for tests
     public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; } // Needed for tests
 }
