@@ -2,18 +2,20 @@ package com.example.demo.config;
 
 import io.swagger.v3.oas.models.*;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.security.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springdoc.core.GroupedOpenApi;
 
 @Configuration
 public class SwaggerConfig {
+
     @Bean
-    public OpenAPI openAPI() {
-        return new OpenAPI()
-                .info(new Info().title("Inventory Balancer API").version("1.0"))
-                .addSecurityItem(new SecurityRequirement().addList("Bearer Auth"))
-                .components(new Components().addSecuritySchemes("Bearer Auth",
-                        new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
+    public OpenAPI apiInfo() {
+        return new OpenAPI().info(new Info().title("Multi-Location Inventory Balancer API").version("v1"));
+    }
+
+    @Bean
+    public GroupedOpenApi publicApi() {
+        return GroupedOpenApi.builder().group("public").pathsToMatch("/**").build();
     }
 }

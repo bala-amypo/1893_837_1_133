@@ -6,20 +6,21 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.ProductService;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+
     private final ProductRepository repo;
 
     public ProductServiceImpl(ProductRepository repo) { this.repo = repo; }
 
     @Override
     public Product createProduct(Product product) {
-        if (product.getSku() != null && repo.findBySku(product.getSku()) != null) {
+        if (repo.findBySku(product.getSku()) != null) {
             throw new BadRequestException("SKU already exists");
         }
-        if (product.isActive() == null) product.setActive(true);
         return repo.save(product);
     }
 
@@ -29,10 +30,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts() { return repo.findAll(); }
+    public List<Product> getAllProducts() {
+        return repo.findAll();
+    }
 
     @Override
-    public void deactivateProduct(Long id) { // This method was missing
+    public void deactivateProduct(Long id) {
         Product p = getProductById(id);
         p.setActive(false);
         repo.save(p);
