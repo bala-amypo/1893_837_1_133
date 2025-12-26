@@ -1,52 +1,55 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import java.time.Instant;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "transfer_suggestion")
+@Table(name = "transfer_suggestions")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransferSuggestion {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(optional = false)
+    
+    @ManyToOne
+    @JoinColumn(name = "source_store_id", nullable = false)
     private Store sourceStore;
-
-    @ManyToOne(optional = false)
+    
+    @ManyToOne
+    @JoinColumn(name = "target_store_id", nullable = false)
     private Store targetStore;
-
-    @ManyToOne(optional = false)
+    
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
-
+    
+    @Column(nullable = false)
     private Integer suggestedQuantity;
+    
+    @Column
     private String priority = "MEDIUM";
-    private Instant generatedAt;
+    
+    @Column(nullable = false)
+    private LocalDateTime generatedAt;
+    
+    @Column
     private String status = "PENDING";
+    
+    @Column
     private String reason;
-
+    
     @PrePersist
     public void prePersist() {
-        if (this.generatedAt == null) this.generatedAt = Instant.now();
-        if (this.status == null) this.status = "PENDING";
+        this.generatedAt = LocalDateTime.now();
+        if (this.status == null) {
+            this.status = "PENDING";
+        }
     }
-
-    // getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public Store getSourceStore() { return sourceStore; }
-    public void setSourceStore(Store sourceStore) { this.sourceStore = sourceStore; }
-    public Store getTargetStore() { return targetStore; }
-    public void setTargetStore(Store targetStore) { this.targetStore = targetStore; }
-    public Product getProduct() { return product; }
-    public void setProduct(Product product) { this.product = product; }
-    public Integer getSuggestedQuantity() { return suggestedQuantity; }
-    public void setSuggestedQuantity(Integer suggestedQuantity) { this.suggestedQuantity = suggestedQuantity; }
-    public String getPriority() { return priority; }
-    public void setPriority(String priority) { this.priority = priority; }
-    public Instant getGeneratedAt() { return generatedAt; }
-    public void setGeneratedAt(Instant generatedAt) { this.generatedAt = generatedAt; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-    public String getReason() { return reason; }
-    public void setReason(String reason) { this.reason = reason; }
 }
