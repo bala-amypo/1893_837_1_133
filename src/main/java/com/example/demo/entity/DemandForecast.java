@@ -19,10 +19,14 @@ public class DemandForecast {
     
     private LocalDate forecastDate;
     private Integer predictedDemand;
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
-    public DemandForecast() {}
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Product getProduct() { return product; }
@@ -31,7 +35,14 @@ public class DemandForecast {
     public void setStore(Store store) { this.store = store; }
     public LocalDate getForecastDate() { return forecastDate; }
     public void setForecastDate(LocalDate forecastDate) { this.forecastDate = forecastDate; }
+    
+    // Alias for test compatibility (forecastedDemand vs predictedDemand)
+    public Integer getForecastedDemand() { return predictedDemand; }
+    public void setForecastedDemand(Integer predictedDemand) { this.predictedDemand = predictedDemand; }
+    
     public Integer getPredictedDemand() { return predictedDemand; }
     public void setPredictedDemand(Integer predictedDemand) { this.predictedDemand = predictedDemand; }
+    
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
