@@ -19,7 +19,7 @@ public class ProductServiceImpl implements ProductService {
         if (product.getSku() != null && repo.findBySku(product.getSku()) != null) {
             throw new BadRequestException("SKU already exists");
         }
-        if (product.isActive() == null) product.setActive(true);
+        // Fix: Removed 'if (product.isActive() == null)' because primitive boolean cannot be null
         return repo.save(product);
     }
 
@@ -31,7 +31,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getAllProducts() { return repo.findAll(); }
 
-    // Fix: Added missing method implementation
     @Override
     public void deactivateProduct(Long id) {
         Product p = getProductById(id);

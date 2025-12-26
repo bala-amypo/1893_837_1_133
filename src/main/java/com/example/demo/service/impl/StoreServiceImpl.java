@@ -19,7 +19,7 @@ public class StoreServiceImpl implements StoreService {
         if (store.getStoreName() != null && repo.findByStoreName(store.getStoreName()) != null) {
             throw new BadRequestException("Store name already exists");
         }
-        if (store.isActive() == null) store.setActive(true);
+        // Fix: Removed 'if (store.isActive() == null)' because primitive boolean cannot be null
         return repo.save(store);
     }
 
@@ -40,7 +40,6 @@ public class StoreServiceImpl implements StoreService {
         return repo.save(s);
     }
 
-    // Fix: Added missing method implementation
     @Override
     public void deactivateStore(Long id) {
         Store s = getStoreById(id);
