@@ -1,20 +1,13 @@
 package com.example.demo.dto;
 
-import java.time.Instant;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AuthResponseDto {
     private String token;
-    private Instant expiresAt;
-
-    public AuthResponseDto() {}
-    public AuthResponseDto(String token, Instant expiresAt) {
-        this.token = token; this.expiresAt = expiresAt;
-    }
-
-    // getters and setters
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
-    public Instant getExpiresAt() { return expiresAt; }
-    public void setExpiresAt(Instant expiresAt) { this.expiresAt = expiresAt; }
+    private Long expiresAt;
 }
-    
