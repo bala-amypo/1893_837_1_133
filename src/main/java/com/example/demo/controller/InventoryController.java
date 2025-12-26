@@ -13,7 +13,8 @@ public class InventoryController {
 
     public InventoryController(InventoryLevelService service) { this.service = service; }
 
-    @PostMapping("/update")
+    // FIXED: Removed "/update" so it handles POST /api/inventory
+    @PostMapping
     public ResponseEntity<InventoryLevel> updateInventory(@RequestBody InventoryLevel inv) {
         return ResponseEntity.ok(service.createOrUpdateInventory(inv));
     }
