@@ -41,7 +41,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public void deactivateStore(Long id) {
+    public void deactivateStore(Long id) { // This method was missing
         Store s = getStoreById(id);
         s.setActive(false);
         repo.save(s);

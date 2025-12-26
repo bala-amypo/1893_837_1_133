@@ -13,8 +13,7 @@ public class InventoryController {
 
     public InventoryController(InventoryLevelService service) { this.service = service; }
 
-    // FIXED: Removed "/update" so it handles POST /api/inventory
-    @PostMapping
+    @PostMapping // REMOVED "/update" to fix 404 error
     public ResponseEntity<InventoryLevel> updateInventory(@RequestBody InventoryLevel inv) {
         return ResponseEntity.ok(service.createOrUpdateInventory(inv));
     }

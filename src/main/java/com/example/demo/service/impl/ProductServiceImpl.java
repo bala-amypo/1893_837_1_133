@@ -32,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getAllProducts() { return repo.findAll(); }
 
     @Override
-    public void deactivateProduct(Long id) {
+    public void deactivateProduct(Long id) { // This method was missing
         Product p = getProductById(id);
         p.setActive(false);
         repo.save(p);
