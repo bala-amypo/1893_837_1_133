@@ -1,25 +1,20 @@
 package com.example.demo.entity;
-
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class DemandForecast {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Store store;
+    @ManyToOne private Store store;
+    @ManyToOne private Product product;
 
-    @ManyToOne
-    private Product product;
-
-    private Integer forecastedDemand;
-
+    @Column(nullable = false)
     private LocalDate forecastDate;
+
+    @Column(nullable = false)
+    private Integer forecastedDemand;
 }

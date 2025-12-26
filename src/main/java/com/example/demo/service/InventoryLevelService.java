@@ -6,4 +6,6 @@ public interface InventoryLevelService {
     InventoryLevel createOrUpdateInventory(InventoryLevel inv);
     List<InventoryLevel> getInventoryForStore(Long storeId);
     List<InventoryLevel> getInventoryForProduct(Long productId);
+    InventoryLevel getSuggestionById(Long id);
+    List<InventoryLevel> findAll();
 }

@@ -1,29 +1,23 @@
 package com.example.demo.entity;
-
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class TransferSuggestion {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Product product;
+    @ManyToOne private Store sourceStore;
+    @ManyToOne private Store targetStore;
+    @ManyToOne private Product product;
 
-    @ManyToOne
-    private Store sourceStore;
-
-    @ManyToOne
-    private Store targetStore;
-
+    @Column(nullable = false)
     private Integer suggestedQuantity;
-    private String reason;
+
+    private String priority = "MEDIUM";
+    private String status = "PENDING";
     private LocalDateTime generatedAt;
 
     @PrePersist
