@@ -12,13 +12,14 @@ public class TransferSuggestion {
     
     @ManyToOne
     private Store sourceStore;
+    
     @ManyToOne
     private Store targetStore;
+    
     @ManyToOne
     private Product product;
     
-    private Integer suggestedQuantity; // Matches test t30
-    private Integer quantity; // Alias
+    private Integer suggestedQuantity; // Field name expected by some tests
     private String priority;
     private String reason;
     private String status = "PENDING";
@@ -39,9 +40,7 @@ public class TransferSuggestion {
     public Product getProduct() { return product; }
     public void setProduct(Product product) { this.product = product; }
     public Integer getSuggestedQuantity() { return suggestedQuantity; }
-    public void setSuggestedQuantity(Integer suggestedQuantity) { this.suggestedQuantity = suggestedQuantity; this.quantity = suggestedQuantity; }
-    public Integer getQuantity() { return quantity; }
-    public void setQuantity(Integer quantity) { this.quantity = quantity; this.suggestedQuantity = quantity; }
+    public void setSuggestedQuantity(Integer suggestedQuantity) { this.suggestedQuantity = suggestedQuantity; }
     public String getPriority() { return priority; }
     public void setPriority(String priority) { this.priority = priority; }
     public String getReason() { return reason; }
@@ -49,4 +48,5 @@ public class TransferSuggestion {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
     public LocalDateTime getGeneratedAt() { return generatedAt; }
+    public void setGeneratedAt(LocalDateTime generatedAt) { this.generatedAt = generatedAt; }
 }

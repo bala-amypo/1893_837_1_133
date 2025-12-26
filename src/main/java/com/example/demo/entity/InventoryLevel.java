@@ -17,9 +17,13 @@ public class InventoryLevel {
     private Product product;
     
     private Integer quantity;
-    private LocalDateTime lastUpdated = LocalDateTime.now();
+    private LocalDateTime lastUpdated;
 
-    public InventoryLevel() {}
+    @PrePersist
+    @PreUpdate
+    public void updateTimestamp() {
+        this.lastUpdated = LocalDateTime.now();
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
