@@ -2,9 +2,10 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.*;
 import com.example.demo.exception.BadRequestException;
-import com.example.demo.repository.*;
+import com.example.demo.repository.InventoryLevelRepository;
 import com.example.demo.service.InventoryLevelService;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,8 +23,10 @@ public class InventoryLevelServiceImpl implements InventoryLevelService {
         InventoryLevel existing = repo.findByStoreAndProduct(inv.getStore(), inv.getProduct());
         if (existing != null) {
             existing.setQuantity(inv.getQuantity());
+            existing.setLastUpdated(LocalDateTime.now()); // Update timestamp
             return repo.save(existing);
         }
+        inv.setLastUpdated(LocalDateTime.now());
         return repo.save(inv);
     }
 
