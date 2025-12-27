@@ -12,12 +12,17 @@ import java.util.List;
 public class DemandForecastServiceImpl implements DemandForecastService {
     private final DemandForecastRepository repo;
 
-    public DemandForecastServiceImpl(DemandForecastRepository repo) { this.repo = repo; }
+    public DemandForecastServiceImpl(DemandForecastRepository repo) {
+        this.repo = repo;
+    }
 
     @Override
     public DemandForecast createForecast(DemandForecast forecast) {
-        if (forecast.getForecastDate() != null && forecast.getForecastDate().isBefore(LocalDate.now())) {
+        if (!forecast.getForecastDate().isAfter(LocalDate.now())) {
             throw new BadRequestException("Forecast date must be in the future");
+        }
+        if (forecast.getForecastedDemand() < 0) {
+             throw new BadRequestException("Quantity must be >= 0");
         }
         return repo.save(forecast);
     }

@@ -4,10 +4,8 @@ import java.util.List;
 
 public interface StoreService {
     Store createStore(Store store);
-    Store getStoreById(Long id);
-    List<Store> getAllStores();
     Store updateStore(Long id, Store store);
-    
-    // Fix: Added missing method
+    Store getStoreById(Long id);
     void deactivateStore(Long id);
+    List<Store> getAllStores();
 }

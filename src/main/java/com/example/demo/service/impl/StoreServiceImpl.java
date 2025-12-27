@@ -10,40 +10,48 @@ import java.util.List;
 
 @Service
 public class StoreServiceImpl implements StoreService {
-    private final StoreRepository repo;
+    private final StoreRepository storeRepo;
 
-    public StoreServiceImpl(StoreRepository repo) { this.repo = repo; }
+    public StoreServiceImpl(StoreRepository storeRepo) {
+        this.storeRepo = storeRepo;
+    }
 
     @Override
     public Store createStore(Store store) {
-        if (store.getStoreName() != null && repo.findByStoreName(store.getStoreName()) != null) {
+        if (storeRepo.findByStoreName(store.getStoreName()).isPresent()) {
             throw new BadRequestException("Store name already exists");
         }
-        // Fix: Removed 'if (store.isActive() == null)' because primitive boolean cannot be null
-        return repo.save(store);
+        return storeRepo.save(store);
+    }
+
+    @Override
+    public Store updateStore(Long id, Store update) {
+        Store existing = getStoreById(id);
+        if (!existing.getStoreName().equals(update.getStoreName()) && 
+            storeRepo.findByStoreName(update.getStoreName()).isPresent()) {
+            throw new BadRequestException("Store name already exists");
+        }
+        existing.setStoreName(update.getStoreName());
+        existing.setAddress(update.getAddress());
+        existing.setRegion(update.getRegion());
+        // active status is preserved
+        return storeRepo.save(existing);
     }
 
     @Override
     public Store getStoreById(Long id) {
-        return repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Store not found"));
-    }
-
-    @Override
-    public List<Store> getAllStores() { return repo.findAll(); }
-
-    @Override
-    public Store updateStore(Long id, Store update) {
-        Store s = getStoreById(id);
-        if (update.getStoreName() != null) s.setStoreName(update.getStoreName());
-        if (update.getAddress() != null) s.setAddress(update.getAddress());
-        if (update.getRegion() != null) s.setRegion(update.getRegion());
-        return repo.save(s);
+        return storeRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Store not found"));
     }
 
     @Override
     public void deactivateStore(Long id) {
-        Store s = getStoreById(id);
-        s.setActive(false);
-        repo.save(s);
+        Store store = getStoreById(id);
+        store.setActive(false);
+        storeRepo.save(store);
+    }
+
+    @Override
+    public List<Store> getAllStores() {
+        return storeRepo.findAll();
     }
 }

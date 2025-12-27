@@ -7,14 +7,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/forecasts")
-public class ForecastController {
+public class DemandForecastController {
     private final DemandForecastService service;
-
-    // Updated to inject DemandForecastService
-    public ForecastController(DemandForecastService service) { this.service = service; }
+    public DemandForecastController(DemandForecastService service) { this.service = service; }
 
     @PostMapping
-    public ResponseEntity<DemandForecast> generateForecast(@RequestBody DemandForecast forecast) {
-        return ResponseEntity.ok(service.createForecast(forecast));
+    public ResponseEntity<DemandForecast> create(@RequestBody DemandForecast f) {
+        return ResponseEntity.ok(service.createForecast(f));
     }
 }

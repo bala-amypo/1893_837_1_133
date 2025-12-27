@@ -10,26 +10,15 @@ import java.util.List;
 @RequestMapping("/api/stores")
 public class StoreController {
     private final StoreService service;
-
     public StoreController(StoreService service) { this.service = service; }
 
     @PostMapping
-    public ResponseEntity<Store> createStore(@RequestBody Store store) {
+    public ResponseEntity<Store> create(@RequestBody Store store) {
         return ResponseEntity.ok(service.createStore(store));
     }
 
     @GetMapping
-    public ResponseEntity<List<Store>> getAllStores() {
+    public ResponseEntity<List<Store>> getAll() {
         return ResponseEntity.ok(service.getAllStores());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Store> getStoreById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getStoreById(id));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Store> updateStore(@PathVariable Long id, @RequestBody Store store) {
-        return ResponseEntity.ok(service.updateStore(id, store));
     }
 }
