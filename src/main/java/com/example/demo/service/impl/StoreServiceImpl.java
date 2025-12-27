@@ -34,7 +34,6 @@ public class StoreServiceImpl implements StoreService {
         existing.setStoreName(update.getStoreName());
         existing.setAddress(update.getAddress());
         existing.setRegion(update.getRegion());
-        // active status is preserved
         return storeRepo.save(existing);
     }
 

@@ -32,11 +32,12 @@ public class AuthServiceImpl implements AuthService {
         if (userRepo.findByEmail(request.getEmail()).isPresent()) {
             throw new BadRequestException("Email already exists");
         }
-        UserAccount user = new UserAccount();
-        user.setEmail(request.getEmail());
+        UserAccount user = new UserAccount(
+            request.getEmail(),
+            passwordEncoder.encode(request.getPassword()),
+            request.getRole()
+        );
         user.setFullName(request.getFullName());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole());
         userRepo.save(user);
     }
 

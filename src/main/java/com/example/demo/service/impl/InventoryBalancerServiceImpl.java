@@ -13,7 +13,7 @@ import java.util.*;
 @Service
 public class InventoryBalancerServiceImpl implements InventoryBalancerService {
     
-    // [cite: 210] Constructor order MUST be exact
+    // Explicit constructor injection as required by tests
     private final TransferSuggestionRepository transferRepo;
     private final InventoryLevelRepository inventoryRepo;
     private final DemandForecastRepository forecastRepo;
@@ -39,53 +39,56 @@ public class InventoryBalancerServiceImpl implements InventoryBalancerService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         if (!product.isActive()) {
-            throw new BadRequestException("Product is inactive"); // [cite: 435]
+            throw new BadRequestException("Product is inactive");
         }
 
         List<Store> stores = storeRepo.findAll();
-        Map<Store, Integer> surplusMap = new HashMap<>();
-        Map<Store, Integer> deficitMap = new HashMap<>();
+        Map<Long, Integer> surplusMap = new HashMap<>(); // Using ID for easier mapping
+        Map<Long, Integer> deficitMap = new HashMap<>();
+        Map<Long, Store> storeMap = new HashMap<>();
+        
         boolean forecastFound = false;
 
         for (Store store : stores) {
+            storeMap.put(store.getId(), store);
             Optional<InventoryLevel> invOpt = inventoryRepo.findByStoreAndProduct(store, product);
             int quantity = invOpt.map(InventoryLevel::getQuantity).orElse(0);
 
-            // [cite: 436] Future forecasts only
+            // Fetch forecasts after today
             List<DemandForecast> forecasts = forecastRepo.findByStoreAndProductAndForecastDateAfter(store, product, LocalDate.now());
             
             if (!forecasts.isEmpty()) {
                 forecastFound = true;
             }
 
-            int totalDemand = forecasts.stream().mapToInt(DemandForecast::getForecastedDemand).sum();
+            int totalDemand = forecasts.stream().mapToInt(DemandForecast::getPredictedDemand).sum();
             int balance = quantity - totalDemand;
 
             if (balance > 0) {
-                surplusMap.put(store, balance);
+                surplusMap.put(store.getId(), balance);
             } else if (balance < 0) {
-                deficitMap.put(store, Math.abs(balance));
+                deficitMap.put(store.getId(), Math.abs(balance));
             }
         }
 
         if (!forecastFound) {
-            throw new BadRequestException("No forecast found"); // [cite: 438]
+            throw new BadRequestException("No forecast found");
         }
 
         List<TransferSuggestion> suggestions = new ArrayList<>();
 
-        // Balancing logic 
-        for (Map.Entry<Store, Integer> source : surplusMap.entrySet()) {
-            int available = source.getValue();
-            for (Map.Entry<Store, Integer> target : deficitMap.entrySet()) {
-                int needed = target.getValue();
+        // Balancing logic
+        for (Map.Entry<Long, Integer> sourceEntry : surplusMap.entrySet()) {
+            int available = sourceEntry.getValue();
+            for (Map.Entry<Long, Integer> targetEntry : deficitMap.entrySet()) {
+                int needed = targetEntry.getValue();
                 if (available <= 0 || needed <= 0) continue;
 
                 int transferQty = Math.min(available, needed);
 
                 TransferSuggestion suggestion = new TransferSuggestion();
-                suggestion.setSourceStore(source.getKey());
-                suggestion.setTargetStore(target.getKey());
+                suggestion.setSourceStore(storeMap.get(sourceEntry.getKey()));
+                suggestion.setTargetStore(storeMap.get(targetEntry.getKey()));
                 suggestion.setProduct(product);
                 suggestion.setSuggestedQuantity(transferQty);
                 suggestion.setPriority("MEDIUM");
@@ -94,7 +97,7 @@ public class InventoryBalancerServiceImpl implements InventoryBalancerService {
                 suggestions.add(transferRepo.save(suggestion));
 
                 available -= transferQty;
-                target.setValue(needed - transferQty);
+                targetEntry.setValue(needed - transferQty);
             }
         }
         
@@ -103,6 +106,6 @@ public class InventoryBalancerServiceImpl implements InventoryBalancerService {
 
     @Override
     public TransferSuggestion getSuggestionById(Long id) {
-        return transferRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Suggestion not found")); // [cite: 442]
+        return transferRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Suggestion not found"));
     }
 }

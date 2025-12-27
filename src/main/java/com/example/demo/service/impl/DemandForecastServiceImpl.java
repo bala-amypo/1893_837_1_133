@@ -21,7 +21,8 @@ public class DemandForecastServiceImpl implements DemandForecastService {
         if (!forecast.getForecastDate().isAfter(LocalDate.now())) {
             throw new BadRequestException("Forecast date must be in the future");
         }
-        if (forecast.getForecastedDemand() < 0) {
+        // Use getPredictedDemand() or getForecastedDemand() as per entity
+        if (forecast.getPredictedDemand() < 0) {
              throw new BadRequestException("Quantity must be >= 0");
         }
         return repo.save(forecast);
