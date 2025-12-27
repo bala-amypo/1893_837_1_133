@@ -33,7 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
             String token = authHeader.substring(7);
             if (jwtUtil.validateToken(token)) {
                 String email = jwtUtil.getEmailFromToken(token);
-                // Create a simple user detail object (role handling can be added here)
+                // Create UserDetails object for Spring Security
                 UserDetails userDetails = new User(email, "", new ArrayList<>());
                 
                 UsernamePasswordAuthenticationToken authToken = 
