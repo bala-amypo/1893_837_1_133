@@ -11,11 +11,15 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
-    // In production, store this in application.properties
     private final String SECRET_KEY = "supersecretkeyformultilocationinventorybalancerapplicationdonotshare";
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+    
+    // Alias for test compatibility
+    public String getUsername(String token) {
+        return extractUsername(token);
     }
 
     public Date extractExpiration(String token) {
@@ -23,12 +27,8 @@ public class JwtUtil {
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
+        final Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
         return claimsResolver.apply(claims);
-    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
     private Boolean isTokenExpired(String token) {
@@ -37,13 +37,8 @@ public class JwtUtil {
 
     public String generateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
-    }
-    
-    // Helper method matching the test case expectation signature
-    public String getUsername(String token) {
-        return extractUsername(token);
     }
 
     public Boolean isTokenValid(String token, String username) {

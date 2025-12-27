@@ -10,36 +10,34 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "user_accounts")
-public class UserAccount {
+@Table(name = "transfer_suggestions")
+public class TransferSuggestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(unique = true)
-    private String email;
-    private String fullName;
-    private String password;
-    private String role; 
-    
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    // Manual constructor is kept because logic often relies on this specific signature
-    public UserAccount(String email, String password, String role) {
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
+    @ManyToOne
+    @JoinColumn(name = "source_store_id")
+    private Store sourceStore;
+
+    @ManyToOne
+    @JoinColumn(name = "target_store_id")
+    private Store targetStore;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    private Integer suggestedQuantity;
+    private String priority; // HIGH, MEDIUM, LOW
+    private String status = "PENDING";
+    private String reason;
+
+    private LocalDateTime generatedAt;
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.generatedAt = LocalDateTime.now();
+        if (this.status == null) this.status = "PENDING";
     }
 }

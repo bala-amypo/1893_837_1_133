@@ -17,10 +17,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserAccount user = repository.findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        
+        // Handle role string, removing ROLE_ prefix if Spring adds it automatically later, 
+        // but typically simple string works here.
+        String role = user.getRole().startsWith("ROLE_") ? user.getRole().substring(5) : user.getRole();
+        
         return User.builder()
             .username(user.getEmail())
             .password(user.getPassword())
-            .roles(user.getRole().replace("ROLE_", ""))
+            .roles(role)
             .build();
     }
 }

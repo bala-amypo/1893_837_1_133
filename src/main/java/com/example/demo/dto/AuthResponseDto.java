@@ -1,4 +1,10 @@
 package com.example.demo.dto;
-import lombok.Data;
 import lombok.AllArgsConstructor;
-@Data @AllArgsConstructor public class AuthResponseDto { private String token; private long expiresAt; }
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter @AllArgsConstructor 
+public class AuthResponseDto { 
+    private String token; 
+    private long expiresAt; 
+}
