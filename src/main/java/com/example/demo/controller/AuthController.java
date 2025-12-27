@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
@@ -30,21 +31,27 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, String> body) {
         try {
+            // Call service to register user
             User user = userService.registerUser(body);
 
-            // Manual Map prevents empty body issues
-            Map<String, Object> response = new HashMap<>();
+            // FIX: Manually build a JSON-safe response map.
+            // Returning the 'User' entity directly causes Serialization Errors (status 500)
+            // because of recursive fields or LocalDateTime issues.
+            Map<String, Object> response = new LinkedHashMap<>();
             response.put("id", user.getId());
             response.put("email", user.getEmail());
             response.put("name", user.getName());
-            response.put("status", "User registered successfully");
+            response.put("message", "User registered successfully");
             
             return ResponseEntity.ok(response);
+
         } catch (Exception e) {
+            // Log error to console so you can see it in TestNG output
+            System.err.println("REGISTRATION FAILED: " + e.getMessage());
             e.printStackTrace();
-            Map<String, Object> error = new HashMap<>();
-            error.put("error", e.getMessage());
-            return ResponseEntity.badRequest().body(error);
+            
+            // Return 400 Bad Request with the error message
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
         }
     }
 
@@ -56,17 +63,21 @@ public class AuthController {
             
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            User user = userRepo.findByEmail(req.getEmail()).orElseThrow();
-            // Use Set to avoid Hibernate PersistentBag serialization issues
-            Set<String> roles = new HashSet<>();
-            user.getRoles().forEach(r -> roles.add(r.getName()));
+            User user = userRepo.findByEmail(req.getEmail())
+                    .orElseThrow(() -> new RuntimeException("User not found after auth"));
+            
+            Set<String> roles = user.getRoles().stream()
+                    .map(r -> r.getName())
+                    .collect(Collectors.toSet());
             
             String token = jwtUtil.generateToken(user.getEmail(), user.getId(), roles);
             
             return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getEmail(), roles));
+
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
+            System.err.println("LOGIN FAILED: " + e.getMessage());
+            // Return 401 Unauthorized for bad credentials
+            return ResponseEntity.status(401).body(Collections.singletonMap("error", "Invalid credentials"));
         }
     }
 }
