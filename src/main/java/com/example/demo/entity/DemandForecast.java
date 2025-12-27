@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -16,23 +15,22 @@ public class DemandForecast {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @ManyToOne
-    private Product product;
-    
-    @ManyToOne
-    private Store store;
-    
-    private LocalDate forecastDate;
-    private Integer predictedDemand;
-    private LocalDateTime createdAt;
 
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-    }
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "store_id")
+    private Store store;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @Column(nullable = false)
+    private LocalDate forecastDate;
+
+    @Column(nullable = false)
+    private Integer predictedDemand; // This matches the getter calls in your service
     
-    // Manual Alias for Tests
+    // Alias for compatibility if tests call getForecastedDemand
     public Integer getForecastedDemand() { return predictedDemand; }
     public void setForecastedDemand(Integer predictedDemand) { this.predictedDemand = predictedDemand; }
 }

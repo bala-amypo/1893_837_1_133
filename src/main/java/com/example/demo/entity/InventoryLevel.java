@@ -4,35 +4,34 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "demand_forecasts")
-public class DemandForecast {
+@Table(name = "inventory_levels", uniqueConstraints = @UniqueConstraint(columnNames = {"store_id", "product_id"}))
+public class InventoryLevel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @ManyToOne
-    private Product product;
-    
-    @ManyToOne
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "store_id")
     private Store store;
-    
-    private LocalDate forecastDate;
-    private Integer predictedDemand;
-    private LocalDateTime createdAt;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @Column(nullable = false)
+    private Integer quantity;
+
+    private LocalDateTime lastUpdated;
 
     @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
+    @PreUpdate
+    public void updateTimestamp() {
+        this.lastUpdated = LocalDateTime.now();
     }
-    
-    // Manual Alias for Tests
-    public Integer getForecastedDemand() { return predictedDemand; }
-    public void setForecastedDemand(Integer predictedDemand) { this.predictedDemand = predictedDemand; }
 }
