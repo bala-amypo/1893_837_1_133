@@ -8,10 +8,8 @@ import java.io.IOException;
 
 @WebServlet(urlPatterns = "/simple-status")
 public class SimpleStatusServlet extends HttpServlet {
-    
-    // <--- CHANGED TO PUBLIC
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setStatus(HttpServletResponse.SC_OK);
         resp.setContentType("text/plain");
         resp.getWriter().write("Multi-Location Inventory Balancer is running");
