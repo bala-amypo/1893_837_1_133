@@ -15,8 +15,7 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info().title("Inventory Balancer API").version("1.0"))
-                // FIX: Explicitly set the Server URL so Swagger knows where to send requests
-                // Make sure to use 'https' to avoid Mixed Content errors in the browser
+                // FIX: Use HTTPS to prevent "Mixed Content" blocking
                 .servers(List.of(new Server().url("https://9220.408procr.amypo.ai/"))) 
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Auth"))
                 .components(new Components().addSecuritySchemes("Bearer Auth",
