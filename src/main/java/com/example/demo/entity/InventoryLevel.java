@@ -4,30 +4,35 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "inventory_levels")
-public class InventoryLevel {
+@Table(name = "demand_forecasts")
+public class DemandForecast {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @ManyToOne
-    private Store store;
-    
-    @ManyToOne
     private Product product;
     
-    private Integer quantity;
-    private LocalDateTime lastUpdated;
+    @ManyToOne
+    private Store store;
+    
+    private LocalDate forecastDate;
+    private Integer predictedDemand;
+    private LocalDateTime createdAt;
 
     @PrePersist
-    @PreUpdate
-    public void updateTimestamp() {
-        this.lastUpdated = LocalDateTime.now();
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
     }
+    
+    // Manual Alias for Tests
+    public Integer getForecastedDemand() { return predictedDemand; }
+    public void setForecastedDemand(Integer predictedDemand) { this.predictedDemand = predictedDemand; }
 }

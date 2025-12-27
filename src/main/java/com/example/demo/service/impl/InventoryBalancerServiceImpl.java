@@ -13,12 +13,12 @@ import java.util.*;
 @Service
 public class InventoryBalancerServiceImpl implements InventoryBalancerService {
     
-    // Exact constructor order as per PDF constraint
+    // [cite: 210] Constructor order MUST be exact
     private final TransferSuggestionRepository transferRepo;
     private final InventoryLevelRepository inventoryRepo;
     private final DemandForecastRepository forecastRepo;
     private final StoreRepository storeRepo;
-    private final ProductRepository productRepo; // Needed to check active status
+    private final ProductRepository productRepo;
 
     public InventoryBalancerServiceImpl(
             TransferSuggestionRepository transferRepo,
@@ -39,7 +39,7 @@ public class InventoryBalancerServiceImpl implements InventoryBalancerService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         if (!product.isActive()) {
-            throw new BadRequestException("Product is inactive");
+            throw new BadRequestException("Product is inactive"); // [cite: 435]
         }
 
         List<Store> stores = storeRepo.findAll();
@@ -51,7 +51,7 @@ public class InventoryBalancerServiceImpl implements InventoryBalancerService {
             Optional<InventoryLevel> invOpt = inventoryRepo.findByStoreAndProduct(store, product);
             int quantity = invOpt.map(InventoryLevel::getQuantity).orElse(0);
 
-            // Fetch forecasts after today
+            // [cite: 436] Future forecasts only
             List<DemandForecast> forecasts = forecastRepo.findByStoreAndProductAndForecastDateAfter(store, product, LocalDate.now());
             
             if (!forecasts.isEmpty()) {
@@ -69,12 +69,12 @@ public class InventoryBalancerServiceImpl implements InventoryBalancerService {
         }
 
         if (!forecastFound) {
-            throw new BadRequestException("No forecast found");
+            throw new BadRequestException("No forecast found"); // [cite: 438]
         }
 
         List<TransferSuggestion> suggestions = new ArrayList<>();
 
-        // Simple balancing logic: Match surpluses to deficits
+        // Balancing logic 
         for (Map.Entry<Store, Integer> source : surplusMap.entrySet()) {
             int available = source.getValue();
             for (Map.Entry<Store, Integer> target : deficitMap.entrySet()) {
@@ -103,6 +103,6 @@ public class InventoryBalancerServiceImpl implements InventoryBalancerService {
 
     @Override
     public TransferSuggestion getSuggestionById(Long id) {
-        return transferRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Suggestion not found"));
+        return transferRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Suggestion not found")); // [cite: 442]
     }
 }
