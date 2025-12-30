@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
+        public AuthController(AuthService authService) {
+                this.authService = authService;
+                    }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequestDto dto) {
-        authService.register(dto);
-        return ResponseEntity.ok("User registered");
-    }
+                        @PostMapping("/register")
+                            public ResponseEntity<?> register(@RequestBody RegisterRequestDto dto) {
+                                    authService.register(dto);
+                                            return ResponseEntity.ok("User registered");
+                                                }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequestDto dto) {
-        return ResponseEntity.ok(authService.login(dto));
-    }
-}
+                                                    @PostMapping("/login")
+                                                        public ResponseEntity<?> login(@RequestBody AuthRequestDto dto) {
+                                                                return ResponseEntity.ok(authService.login(dto));
+                                                                    }
+                                                                    }
